@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bolinha Quicando</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      height: 80vh;
+      max-width: 600px;
+    }
+
+    .ball {
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle at 30% 30%, #fff, #ff3366);
+      border-radius: 50%;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow:
+        0 0 30px #ff3366,
+        inset 0 0 25px rgba(255, 255, 255, 0.6);
+      animation: bounce 1.6s infinite ease-in-out;
+    }
+
+    /* Sombreamento no chão */
+    .shadow {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 20px;
+      background: rgba(255, 51, 102, 0.4);
+      border-radius: 50%;
+      filter: blur(12px);
+      opacity: 0.7;
+      animation: shadow 1.6s infinite ease-in-out;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        top: 10%;
+      }
+      50% {
+        top: 70%;
+      }
+    }
+
+    @keyframes shadow {
+      0%, 100% {
+        width: 140px;
+        opacity: 0.3;
+      }
+      50% {
+        width: 220px;
+        opacity: 0.8;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="shadow"></div>
+    <div class="ball"></div>
+  </div>
+
+  <script>
+    // Quer deixar mais legal ainda? Pode adicionar clique para mudar cor!
+    const ball = document.querySelector('.ball');
+
+    const colors = [
+      '#ff3366', '#33ff99', '#3366ff', '#ffcc33',
+      '#ff66cc', '#00ffff', '#ff6f61', '#a78bfa'
+    ];
+
+    ball.addEventListener('click', () => {
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      ball.style.background = `radial-gradient(circle at 30% 30%, #fff, ${randomColor})`;
+      ball.style.boxShadow = `0 0 30px ${randomColor}, inset 0 0 25px rgba(255,255,255,0.6)`;
+
+      // Efeito de "pulo" ao clicar
+      ball.style.transform = 'translateX(-50%) scale(1.2)';
+      setTimeout(() => {
+        ball.style.transform = 'translateX(-50%) scale(1)';
+      }, 150);
+    });
+  </script>
+
+</body>
+</html>
