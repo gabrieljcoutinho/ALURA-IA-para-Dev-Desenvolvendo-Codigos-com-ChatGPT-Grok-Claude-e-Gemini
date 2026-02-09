@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Contador Regressivo</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #282c34;
+            color: white;
+            margin: 0;
+        }
+        #contador {
+            font-size: 10rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="contador">5</div>
+
+    <script>
+        let numero = 5;
+        const elementoContador = document.getElementById('contador');
+
+        const intervalo = setInterval(() => {
+            numero--; // Subtrai 1
+
+            if (numero > 0) {
+                elementoContador.innerText = numero;
+            } else {
+                elementoContador.innerText = "🚀";
+                clearInterval(intervalo); // Para o contador
+            }
+        }, 1000); // 1000 milissegundos = 1 segundo
+    </script>
+
+</body>
+</html>

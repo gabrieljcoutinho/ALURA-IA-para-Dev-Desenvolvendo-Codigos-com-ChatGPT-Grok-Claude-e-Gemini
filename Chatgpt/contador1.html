@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Contador Regressivo</title>
+
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      font-size: 80px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="contador">5</div>
+
+  <script>
+    let numero = 5;
+    const contador = document.getElementById("contador");
+
+    const intervalo = setInterval(() => {
+      contador.textContent = numero;
+      numero--;
+
+      if (numero === 0) {
+        clearInterval(intervalo);
+      }
+    }, 1000);
+  </script>
+
+</body>
+</html>

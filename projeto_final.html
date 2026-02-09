@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avalie sua compra</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Estilização customizada para o input range */
+    input[type=range] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 8px;
+        background: #e5e7eb; /* Cor da barra - cinza claro */
+        border-radius: 5px;
+        outline: none;
+        opacity: 0.7;
+        transition: opacity .2s;
+    }
+
+    input[type=range]:hover {
+        opacity: 1;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        background: #3b82f6; /* Cor do seletor - azul */
+        cursor: pointer;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+
+    input[type=range]::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        background: #3b82f6;
+        cursor: pointer;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body id="page-body" class="flex items-center justify-center min-h-screen bg-gray-100 transition-colors duration-500">
+
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg mx-4">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Sua opinião é importante!</h1>
+    <p class="text-center text-gray-500 mb-6">Avalie sua experiência de compra conosco.</p>
+
+    <!-- Campo para o usuário digitar seu comentário -->
+    <textarea id="comentario" placeholder="Escreva seu comentário aqui..." class="w-full h-28 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"></textarea>
+    <div id="error-message" class="text-red-500 text-sm mt-1 h-5"></div>
+
+
+    <!-- Slider de avaliação -->
+    <div class="mt-4">
+      <input type="range" id="avaliacao" min="0" max="2" step="1" value="1">
+      <!-- Títulos dos estados do slider -->
+      <div class="flex justify-between text-sm font-medium text-gray-600 mt-2">
+        <span>Ruim</span>
+        <span>Regular</span>
+        <span>Ótimo</span>
+      </div>
+    </div>
+
+
+    <!-- Botão de envio -->
+    <button onclick="enviarFeedback()" class="w-full mt-8 py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300">
+      Enviar Avaliação
+    </button>
+
+    <!-- Div que exibirá a mensagem de agradecimento -->
+    <div id="mensagem" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center hidden">
+      <!-- O conteúdo será inserido via JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    // Lista de palavras proibidas atualizada
+    const palavrasProibidas = [
+      'uva',
+      'abacate',
+      'maracujá',
+      // Adicione mais palavras conforme necessário
+    ];
+
+    // Função para censurar texto
+    function censurarTexto(texto, palavrasProibidas) {
+      let textoCensurado = texto;
+      for (let palavra of palavrasProibidas) {
+        palavra = palavra.trim();
+        if(palavra.length > 0) {
+            const regex = new RegExp(`\\b${palavra}\\b`, 'gi');
+            const asteriscos = '*'.repeat(palavra.length);
+            textoCensurado = textoCensurado.replace(regex, asteriscos);
+        }
+      }
+      return textoCensurado;
+    }
+
+    // Seleciona os elementos do DOM
+    const slider = document.getElementById('avaliacao');
+    const pageBody = document.getElementById('page-body');
+    const errorMessageDiv = document.getElementById('error-message');
+
+    // Mapeamento de valores do slider para cores de fundo
+    const bgColors = {
+      '0': 'bg-red-100',    // Ruim
+      '1': 'bg-yellow-100', // Regular
+      '2': 'bg-green-100'  // Ótimo
+    };
+
+    // Função para atualizar a cor de fundo
+    function atualizarCorDeFundo() {
+        const valor = slider.value;
+        // Remove cores antigas e adiciona a nova
+        pageBody.classList.remove('bg-red-100', 'bg-yellow-100', 'bg-green-100', 'bg-gray-100');
+        pageBody.classList.add(bgColors[valor]);
+    }
+
+    // Evento disparado sempre que o usuário mover o slider
+    slider.addEventListener('input', atualizarCorDeFundo);
+
+    // Função chamada ao clicar no botão "Enviar"
+    function enviarFeedback() {
+      const comentarioOriginal = document.getElementById('comentario').value;
+      const mensagemDiv = document.getElementById('mensagem');
+
+      // Verifica se o comentário está vazio
+      if (comentarioOriginal.trim() === "") {
+        errorMessageDiv.textContent = "Por favor, escreva um comentário.";
+        mensagemDiv.classList.add('hidden');
+        return;
+      }
+
+      // Limpa a mensagem de erro se o comentário for válido
+      errorMessageDiv.textContent = "";
+
+      // Aplica a censura ao comentário
+      const comentarioCensurado = censurarTexto(comentarioOriginal, palavrasProibidas);
+
+      // Exibe a mensagem de agradecimento e o comentário censurado
+      mensagemDiv.classList.remove('hidden');
+      mensagemDiv.innerHTML = `<p class="font-semibold text-green-800">Obrigado pelo seu feedback!</p><p class="text-gray-700 mt-1"><strong>Seu comentário:</strong> ${comentarioCensurado}</p>`;
+    }
+
+    // Configura cor inicial do fundo de acordo com o valor padrão do slider
+    atualizarCorDeFundo();
+  </script>
+</body>
+</html>
