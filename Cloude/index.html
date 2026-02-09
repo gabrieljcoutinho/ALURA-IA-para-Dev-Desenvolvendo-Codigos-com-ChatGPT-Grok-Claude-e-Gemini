@@ -57,7 +57,7 @@
             dy: 0,  // velocidade vertical
             gravity: 0.5,
             bounce: 1.0,  // fator de quique perfeito para loop infinito
-            color: '#FFD700',
+            color: '#FF0000',  // vermelho
             minBounceVelocity: 12  // velocidade mínima de quique
         };
 
@@ -82,14 +82,14 @@
                 ball.y,
                 ball.radius
             );
-            gradient.addColorStop(0, '#FFED4E');
-            gradient.addColorStop(1, ball.color);
+            gradient.addColorStop(0, '#FF6666');  // vermelho claro
+            gradient.addColorStop(1, ball.color);  // vermelho escuro
 
             ctx.fillStyle = gradient;
             ctx.fill();
 
             // Borda da bolinha
-            ctx.strokeStyle = '#FFA500';
+            ctx.strokeStyle = '#CC0000';  // vermelho escuro
             ctx.lineWidth = 2;
             ctx.stroke();
             ctx.closePath();
