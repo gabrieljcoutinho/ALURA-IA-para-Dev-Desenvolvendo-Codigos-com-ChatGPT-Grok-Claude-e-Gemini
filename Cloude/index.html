@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolinha Quicando</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            border: 3px solid white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 14px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        Bolinha Pulando em Loop! 🎾<br>
+        Clique para mudar a direção
+    </div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Definir tamanho do canvas
+        canvas.width = 800;
+        canvas.height = 600;
+
+        // Propriedades da bolinha
+        let ball = {
+            x: canvas.width / 2,
+            y: 50,
+            radius: 20,
+            dx: 4,  // velocidade horizontal
+            dy: 0,  // velocidade vertical
+            gravity: 0.5,
+            bounce: 1.0,  // fator de quique perfeito para loop infinito
+            color: '#FFD700',
+            minBounceVelocity: 12  // velocidade mínima de quique
+        };
+
+        function drawBall() {
+            // Sombra da bolinha
+            ctx.beginPath();
+            ctx.arc(ball.x + 5, ball.y + 5, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fill();
+            ctx.closePath();
+
+            // Bolinha principal
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+
+            // Gradiente para dar profundidade
+            const gradient = ctx.createRadialGradient(
+                ball.x - ball.radius/3,
+                ball.y - ball.radius/3,
+                ball.radius/10,
+                ball.x,
+                ball.y,
+                ball.radius
+            );
+            gradient.addColorStop(0, '#FFED4E');
+            gradient.addColorStop(1, ball.color);
+
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Borda da bolinha
+            ctx.strokeStyle = '#FFA500';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+        }
+
+        function update() {
+            // Limpar canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Aplicar gravidade
+            ball.dy += ball.gravity;
+
+            // Atualizar posição
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            // Verificar colisão com o chão
+            if (ball.y + ball.radius > canvas.height) {
+                ball.y = canvas.height - ball.radius;
+                ball.dy = -ball.dy * ball.bounce;
+
+                // Garantir velocidade mínima de quique para loop contínuo
+                if (Math.abs(ball.dy) < ball.minBounceVelocity) {
+                    ball.dy = -ball.minBounceVelocity;
+                }
+            }
+
+            // Verificar colisão com o teto
+            if (ball.y - ball.radius < 0) {
+                ball.y = ball.radius;
+                ball.dy = -ball.dy * ball.bounce;
+            }
+
+            // Verificar colisão com as paredes laterais
+            if (ball.x + ball.radius > canvas.width) {
+                ball.x = canvas.width - ball.radius;
+                ball.dx = -ball.dx;
+            }
+
+            if (ball.x - ball.radius < 0) {
+                ball.x = ball.radius;
+                ball.dx = -ball.dx;
+            }
+
+            // Desenhar a bolinha
+            drawBall();
+
+            // Continuar animação
+            requestAnimationFrame(update);
+        }
+
+        // Clique para dar impulso na bolinha
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            // Calcular direção do impulso
+            const dx = mouseX - ball.x;
+            const dy = mouseY - ball.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            // Aplicar impulso
+            ball.dx = (dx / distance) * 8;
+            ball.dy = (dy / distance) * 8;
+        });
+
+        // Iniciar animação
+        update();
+    </script>
+</body>
+</html>
